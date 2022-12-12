@@ -1,34 +1,61 @@
 var form = document.getElementById('addForm');
 var itemList = document.getElementById('items');
-loadItems()
-
+const totalDis = document.getElementById('total')
+const baseUrl = "https://crudcrud.com/api/891e4d1bda0f47eeb01aacf3f6e72c04/data/";
+window.addEventListener("DOMContentLoaded",loadItems);
+var total =0;
 
 form.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 
-
+//...............Create...........................
 function addItem(e){
   e.preventDefault();
   let val = document.getElementById('val').value;
   const des = document.getElementById('des').value;
   const cat = document.getElementById('cat').value;
-
-  append(val,des,cat);
+  store(val,des,cat);
+}
+async function store(val,des,cat){
+  let data = await axios.post(baseUrl,{val,des,cat});
+  console.log(data.data);
+  append([data.data]);
 }
 
+//...............Read...........................
+async function loadItems(){
+  let data = await axios.get(baseUrl);
+  append(data.data);
+}
 
-function removeItem(e){
+//...............Update...........................
+async function edit(e){
+  e.preventDefault();
+  const val = e.target.firstElementChild.value;
+  const des = e.target.firstElementChild.nextSibling.value;
+  const cat = e.target.firstElementChild.nextSibling.nextSibling.value;
+  const _id = e.target.parentElement.classList[1];
+  e.target.parentElement.remove();
+  await axios.put(baseUrl+_id,{val,des,cat})
+  addListner();
+  append([{val,des,cat,_id}]);
+}
+//...............Delete...........................
+async function removeItem(e){
   if(e.target.classList.contains('delete')){
     if(confirm('Are You Sure?')){
       let li = e.target.parentElement;
-      removeStore(li.classList[1]);
+      total-= parseInt(li.firstChild.textContent);
+      await axios.delete(baseUrl+li.classList[1]);
       itemList.removeChild(li);
+      totalDis.innerText = "Total Expense: "+total;
     }
   }else  if(e.target.classList.contains('edit')){
     removeListner();
    
     let li = e.target.parentElement;
- 
+    total-=parseInt(li.firstChild.textContent);
+    console.log(parseInt(li.firstChild.textContent),total);
     let str=li.firstChild.nextSibling.textContent;
  
     li.innerHTML = `<form id="editForm" class="form-inline mb-3"> <input type="number" class="form-control mr-2" value=${parseInt(li.firstChild.textContent)}><input type="text" class="form-control mr-2" value='${str}'><select name="cat" id="cat">
@@ -44,21 +71,11 @@ function removeItem(e){
  
 }
 
-
-function edit(e){
-    e.preventDefault();
-    const val = e.target.firstElementChild.value;
-    const des = e.target.firstElementChild.nextSibling.value;
-    const cat = e.target.firstElementChild.nextSibling.nextSibling.value;
-    const cName = e.target.parentElement.classList[1];
-    e.target.parentElement.remove();
-    append(val,des,cat,cName,true);
-}
-function append(val,des,cat,load=localStorage.length,edit){
-  if(!val) val=0;
-  if(!des) des = "Nothing to Describe";
+//..................................Utils.......................
+function append(data){
+  for(let {val,des,cat,_id} of data){
     const li = document.createElement('li');
-    li.className = 'list-group-item '+ load;
+    li.className = 'list-group-item '+ _id;
     li.appendChild(document.createTextNode(val+" : "));
     li.appendChild(document.createTextNode(des+"  "));
     const div = document.createElement('div');
@@ -76,14 +93,11 @@ function append(val,des,cat,load=localStorage.length,edit){
     eBtn.appendChild(document.createTextNode('Edit'));
     li.appendChild(eBtn);
     itemList.appendChild(li);
-    
-    if(typeof(load)=="number"){
-      addListner();
-      store(val,des,cat,load);
-    }
-    if(edit) addListner();
-}
+    total+=parseInt(val);
+  }
+  totalDis.innerText = "Total Expense: "+total;
 
+}
 
 function addListner(){
   form.addEventListener('submit', addItem);
@@ -102,18 +116,4 @@ function removeListner(){
   for(let e of elements) e.readOnly= true;
   let options = document.querySelectorAll(".opt")
   for (const e of options) e.disabled =true;
-}
-function store(val,des,cat,i){
-  while(localStorage.getItem(i))i++;
-  localStorage.setItem(i,JSON.stringify({val,des,cat}));
-}
-function loadItems(){
-  for(let i=0;i<localStorage.length;i++){
-    let key =localStorage.key(i);
-    let arr = Object.values(JSON.parse(localStorage.getItem(key)));
-    append(...arr,key);
-  }
-}
-function removeStore(i){
-localStorage.removeItem(i);
 }
