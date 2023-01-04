@@ -10,4 +10,6 @@ router.route("/")
         }))
         .post(catchAsync (userController.addUser))
 
+router.post("/login",userController.login);
+
 module.exports = router;

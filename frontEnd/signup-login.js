@@ -9,9 +9,7 @@ signIn.addEventListener("submit",async (e)=>{
     const data = new FormData(signIn);
     let obj ={};
     for (const [name,value] of data) {
-        console.log(name,value);
       obj[name] = value;
-      console.log(obj);
     }
     try {
         const res = await axios.post(base,obj);
@@ -27,11 +25,10 @@ logIn.addEventListener("submit",async(e)=>{
     const data = new FormData(logIn);
     let obj ={};
     for (const [name,value] of data) {
-        console.log(name,value);
       obj[name] = value;
     }
     try {
-        const res = await axios.post(base,obj);
+        const res = await axios.post(base+"login",obj);
         giveFeed(res.data);
     } catch (error) {
         giveFeed(error.response.data);
