@@ -21,7 +21,8 @@ async function store(value,description,category){
     let data = await axios.post(baseUrl,{value,description,category});
     append([data.data]);
   } catch (error) {
-   console.log(error); 
+
+   console.log(error.status); 
   }
 }
 

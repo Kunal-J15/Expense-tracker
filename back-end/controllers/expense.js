@@ -25,7 +25,7 @@ module.exports.getAllExpenses = (async(req,res,next)=>{
     res.send(client);
 });
 
-module.exports.deleteExpense= catchAsync(async(req,res,next)=>{
+module.exports.deleteExpense = catchAsync(async(req,res,next)=>{
     let client = await Expense.destroy({where:{
       id:req.params.id
     }});

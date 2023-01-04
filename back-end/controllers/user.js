@@ -28,8 +28,8 @@ exports.login = async(req,res,next)=>{
     const user = await User.findOne({where:{email}});
     if(user){
         bcrypt.compare(password, user.password, function(err, result) {
-            if(err) return res.status(300).send("something went wrong")
-            if(result) res.send("Login successful");
+            if(err) return res.sendStatus(300).send("something went wrong")
+            if(result) res.send("login Succefull");
             else res.status(401).send("Incorrect Password or Email")
         });
     }else throw new Error();
