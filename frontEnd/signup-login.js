@@ -31,6 +31,7 @@ logIn.addEventListener("submit",async(e)=>{
         const res = await axios.post(base+"login",obj);
         giveFeed(res.data);
     } catch (error) {
+        console.log(error);
         giveFeed(error.response.data);
     }
 })
