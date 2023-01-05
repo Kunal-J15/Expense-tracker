@@ -9,6 +9,8 @@ const expenseRoute = require('./routes/expense');
 const userRoute = require("./routes/users")
 const sequelize = require('./utils/database.js');
 const cors = require("cors");
+const User = require('./models/user');
+const Expense = require('./models/expense');
 app.use(cors());
 
 
@@ -19,7 +21,10 @@ app.use(express.json({extended:true}))
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
 
-sequelize.sync(/*{force:true}*/).then(u=>{
+User.hasMany(Expense);
+Expense.belongsTo(User);
+
+sequelize.sync({force:true}).then(u=>{
     app.listen(port, () => {
         console.log(`Booking app listening on port ${port}`)
       })
