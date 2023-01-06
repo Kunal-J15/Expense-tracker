@@ -21,7 +21,7 @@ const User = sequelize.define("user",{
         type:Sequelize.STRING,
         allowNull:false
     },
-    isPrimium:Sequelize.BOOLEAN
+    isPrimium:Sequelize.BOOLEAN,
 });
 
 module.exports = User;

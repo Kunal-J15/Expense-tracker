@@ -3,6 +3,7 @@ var itemList = document.getElementById('items');
 const totalDis = document.getElementById('total')
 const baseUrl = "http://localhost:3000/expense/";
 const primiumUrl = "http://localhost:3000/primium/";
+
 window.addEventListener("DOMContentLoaded",loadItems);
 var total =0;
 
@@ -30,13 +31,15 @@ async function store(value,description,category){
 //...............Read...........................
 async function loadItems(){
   try {
+    JSON.parse(localStorage.getItem("token")).isPrimium && primiumFeatures();
     let data = await axios.get(baseUrl);
     append(data.data);
   } catch (error) {
+    console.log(error);
     if(error.response.status===401);
-    let url = window.location.href.split("/");
-    url[url.length-1] = "login.html";
-    window.location = url.join("/");
+    // let url = window.location.href.split("/");
+    // url[url.length-1] = "login.html";
+    // window.location = url.join("/");
   }
  
 }
@@ -106,7 +109,9 @@ async function paymentHandler(e) {
     "order_id": response.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "handler": async function (response) {
       try {
-        await axios.post(primiumUrl+"success",response)
+        await axios.post(primiumUrl+"success",response);
+        alert("You are primium user now");
+        primiumFeatures();
       } catch (error) {
         console.log(response);
         console.log(error);
@@ -123,7 +128,37 @@ rzp1.on('payment.failed', async function (response){
 rzp1.open();
     e.preventDefault();
 }
+
+async function leadBoard(e) { 
+  try {
+    const data = (await axios.get( primiumUrl+"leadboard"));
+    const leadDiv = document.getElementById("leadDiv");
+    console.log(leadDiv.style.display);
+    if(!leadDiv.style.display) return  leadDiv.style.display = "none";
+    leadDiv.style = "";
+    const ol = document.getElementById("lead");
+    ol.innerHTML="";
+    let i=1;
+    for (const user of data.data) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span>${i}.  </span> <span>${user.name} </span> <span> ${user.total}</span>`;
+      li.className = "list-group-item list-group-item-info"
+      ol.appendChild(li);
+      i++;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  
+
+}
 document.getElementById("rzp-button1").onclick = paymentHandler;
+
+function primiumFeatures() {
+  document.getElementById("primium").innerText = "You are Primium user"
+  document.getElementById("rzp-button1").innerText = "Leadboard"
+  document.getElementById("rzp-button1").onclick=leadBoard;
+}
 
 function append(data){
   for(let {value,description,category,id} of data){
@@ -160,6 +195,7 @@ function addListner(){
   let options = document.querySelectorAll(".opt")
   for (const e of options) e.disabled =false;
 }
+
 function removeListner(){
   form.removeEventListener('submit', addItem);
   function doNothing(e){e.preventDefault()}

@@ -25,7 +25,7 @@ exports.login = async(req,res,next)=>{
     if(user){
         bcrypt.compare(password, user.password, function(err, result) {
             if(err) return res.sendStatus(300).send("something went wrong")
-            if(result) res.json({success:true,message:"logine successful", id:hashId(user.id)});
+            if(result) res.json({success:true,message:"login successful", id:hashId(user.id),isPrimium:user.isPrimium});
             else res.status(401).send("Incorrect Password or Email")
         });
     }else throw new Error();

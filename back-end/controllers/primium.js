@@ -1,5 +1,7 @@
 const Razorpay = require('razorpay');
+const Expense = require('../models/expense');
 const Order = require('../models/order');
+const User = require('../models/user');
 
 
 exports.purches = async (req,res,next)=>{
@@ -31,4 +33,18 @@ exports.failPurches = async(req,res,next)=>{
    Order.update({status : "failed"},{where:{orderId:order_id}}).then(()=>{
     return res.status(202).json({success:false,message:"transaction failed"});
    })
+}
+
+exports.leadboard =async(req,res,next)=>{
+  const expenses = await Expense.findAll();
+  const users = await User.findAll();
+  const data=[];
+  for (const user of users) {
+    const temp= {id:user.id,name:user.name,total:0};
+  for(let exp of expenses){
+      if(temp.id==exp.userId)temp.total += exp.value;  
+    }
+    data.push(temp);
+  }
+  res.json(data.sort((a,b) => b.total-a.total));
 }
