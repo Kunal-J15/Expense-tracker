@@ -7,7 +7,9 @@ const app = express();
 const port = 3000;
 const expenseRoute = require('./routes/expense');
 const userRoute = require("./routes/users");
-const primiumRoute = require("./routes/primium")
+const primiumRoute = require("./routes/primium");
+const passwordRoute = require("./routes/password");
+
 const sequelize = require('./utils/database.js');
 const cors = require("cors");
 const User = require('./models/user');
@@ -40,6 +42,7 @@ sequelize.sync({/*force:true*/}).then(u=>{
 app.use("/expense/",expenseRoute);
 app.use("/user/",userRoute);
 app.use("/primium/",primiumRoute);
+app.use("/password/",passwordRoute);
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
