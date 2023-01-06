@@ -14,9 +14,9 @@ signIn.addEventListener("submit",async (e)=>{
     try {
         const res = await axios.post(base,obj);
         giveFeed(res.data);
-        // let url = window.location.href.split("/");
-        // url[url.length-1] = "login.html";
-        // window.location = url.join("/");
+        let url = window.location.href.split("/");
+        url[url.length-1] = "login.html";
+        window.location = url.join("/");
     } catch (error) {
         giveFeed(error.response.data);
     }
@@ -36,9 +36,9 @@ logIn.addEventListener("submit",async(e)=>{
         console.log(res.data);
         localStorage.setItem("token",JSON.stringify(res.data));
         giveFeed(res.data.message);
-        // let url = window.location.href.split("/");
-        // url[url.length-1] = "expense.html";
-        // window.location = url.join("/");
+        let url = window.location.href.split("/");
+        url[url.length-1] = "expense.html";
+        window.location = url.join("/");
     } catch (error) {
         console.log(error);
         giveFeed(error.response.data);
