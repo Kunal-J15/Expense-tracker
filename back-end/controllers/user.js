@@ -30,7 +30,7 @@ exports.login = async(req,res,next)=>{
         });
     }else throw new Error();
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.status(404).send("user do not exist")
     }
     

@@ -2,7 +2,7 @@ const base = "http://localhost:3000/user/";
 const signIn = document.querySelector("#signIn");
 const logIn = document.querySelector("#logIn");
 const resDiv = document.querySelector("#res");
-axios.defaults.headers.common['Athentication'] = localStorage.getItem("id");
+axios.defaults.headers.common['Athentication'] = localStorage.getItem("token");
 if(signIn){
 signIn.addEventListener("submit",async (e)=>{
     e.preventDefault();
@@ -34,7 +34,7 @@ logIn.addEventListener("submit",async(e)=>{
     try {
         const res = await axios.post(base+"login",obj);
         console.log(res.data);
-        localStorage.setItem("id",res.data.id)
+        localStorage.setItem("token",res.data.id)
         giveFeed(res.data.message);
         let url = window.location.href.split("/");
         url[url.length-1] = "expense.html";

@@ -2,6 +2,7 @@ var form = document.getElementById('addForm');
 var itemList = document.getElementById('items');
 const totalDis = document.getElementById('total')
 const baseUrl = "http://localhost:3000/expense/";
+const primiumUrl = "http://localhost:3000/primium/";
 window.addEventListener("DOMContentLoaded",loadItems);
 var total =0;
 
@@ -30,10 +31,12 @@ async function store(value,description,category){
 async function loadItems(){
   try {
     let data = await axios.get(baseUrl);
-    console.log("inside loadItems");
     append(data.data);
   } catch (error) {
-    console.log(error);
+    if(error.response.status===401);
+    let url = window.location.href.split("/");
+    url[url.length-1] = "login.html";
+    window.location = url.join("/");
   }
  
 }
@@ -94,6 +97,34 @@ async function removeItem(e){
 }
 
 //..................................Utils.......................
+async function paymentHandler(e) {
+  const token = localStorage.getItem("token");
+  let response = await axios.get(primiumUrl);
+  response = response.data;
+  var options = {
+    "key": response.key_id, // Enter the Key ID generated from the Dashboard
+    "order_id": response.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": async function (response) {
+      try {
+        await axios.post(primiumUrl+"success",response)
+      } catch (error) {
+        console.log(response);
+        console.log(error);
+      }
+       
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', async function (response){
+       axios.post(primiumUrl+"fail", response.error.metadata);
+       alert(response.error.description);
+});
+
+rzp1.open();
+    e.preventDefault();
+}
+document.getElementById("rzp-button1").onclick = paymentHandler;
+
 function append(data){
   for(let {value,description,category,id} of data){
     const li = document.createElement('li');

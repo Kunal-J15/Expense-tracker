@@ -6,11 +6,13 @@ const methodOverride = require('method-override');
 const app = express();
 const port = 3000;
 const expenseRoute = require('./routes/expense');
-const userRoute = require("./routes/users")
+const userRoute = require("./routes/users");
+const primiumRoute = require("./routes/primium")
 const sequelize = require('./utils/database.js');
 const cors = require("cors");
 const User = require('./models/user');
 const Expense = require('./models/expense');
+const Order = require('./models/order');
 app.use(cors());
 
 
@@ -23,8 +25,10 @@ app.use(methodOverride('_method'));
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
+Order.belongsTo(User);
+User.hasMany(Order);
 
-sequelize.sync({force:true}).then(u=>{
+sequelize.sync({/*force:true*/}).then(u=>{
     app.listen(port, () => {
         console.log(`Booking app listening on port ${port}`)
       })
@@ -35,6 +39,7 @@ sequelize.sync({force:true}).then(u=>{
 
 app.use("/expense/",expenseRoute);
 app.use("/user/",userRoute);
+app.use("/primium/",primiumRoute);
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
