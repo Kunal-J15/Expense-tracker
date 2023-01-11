@@ -9,10 +9,10 @@ exports.isAuthentic = async(req,res,next)=>{
     try {
         const hash = req.headers.athentication;
         var decoded = jwt.verify(hash, process.env.SECRET);
-        console.log(decoded.id.id);
+        // console.log(decoded.id.id);
         req.user =  await User.findOne({where:{id:decoded.id}});
         if(req.user) return next();
-        console.log("incomming");
+        // console.log("incomming");
         res.status(401).send("Login first")
     } catch (error) {
         res.status(401).send("Login first")

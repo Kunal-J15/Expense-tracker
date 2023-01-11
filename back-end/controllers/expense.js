@@ -20,7 +20,7 @@ module.exports.getAllExpenses = (async(req,res,next)=>{
     // ....................UPDATE SPECIFIC
     const {value,description,category} = req.body;
 
-    console.log(req.body,req.params.id);
+    // console.log(req.body,req.params.id);
     let client = await Expense.update({value:parseInt(value),description,category},{where:{ id:req.params.id ,userId : req.user.id}}); 
     res.send(client);
 });

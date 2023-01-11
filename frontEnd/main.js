@@ -31,15 +31,15 @@ async function store(value,description,category){
 //...............Read...........................
 async function loadItems(){
   try {
-    JSON.parse(localStorage.getItem("token")).isPrimium && primiumFeatures();
+    localStorage.getItem("token") && JSON.parse(localStorage.getItem("token")).isPrimium && primiumFeatures();
     let data = await axios.get(baseUrl);
     append(data.data);
   } catch (error) {
     console.log(error);
     if(error.response.status===401);
-    // let url = window.location.href.split("/");
-    // url[url.length-1] = "login.html";
-    // window.location = url.join("/");
+    let url = window.location.href.split("/");
+    url[url.length-1] = "login.html";
+    window.location = url.join("/");
   }
  
 }

@@ -10,9 +10,7 @@ if(forgot){
         }
         try {
             const res = await axios.post(passUrl+"forgot",obj);
-            console.log(res.data);
-            localStorage.setItem("token",JSON.stringify(res.data));
-            giveFeed(res.data.message);
+            giveFeed(res.data.message,100000);
         } catch (error) {
             console.log(error);
             giveFeed(error.response.data);

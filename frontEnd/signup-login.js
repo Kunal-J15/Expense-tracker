@@ -45,9 +45,9 @@ logIn.addEventListener("submit",async(e)=>{
     }
 })
 }
-function giveFeed(msg) {
+function giveFeed(msg,time=2000) {
     resDiv.innerText = msg;
     setTimeout(() => {
         resDiv.innerText="";
-    }, 2000);
+    }, time);
 }
