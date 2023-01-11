@@ -158,6 +158,15 @@ function primiumFeatures() {
   document.getElementById("primium").innerText = "You are Primium user"
   document.getElementById("rzp-button1").innerText = "Leadboard"
   document.getElementById("rzp-button1").onclick=leadBoard;
+  const btn = document.createElement("button");
+  btn.className = "btn btn-dark";
+  btn.innerText = "Report";
+  btn.onclick = ()=>{
+    let url = window.location.href.split("/");
+        url[url.length-1] = "report.html";
+        window.location = url.join("/");
+  };
+  document.querySelector("#main-header").appendChild(btn);
 }
 
 function append(data){
