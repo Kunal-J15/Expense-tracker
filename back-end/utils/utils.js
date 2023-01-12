@@ -1,6 +1,6 @@
 const User = require("../models/user");
 var jwt = require('jsonwebtoken');
-
+var AWS = require('aws-sdk');
 exports.hashId = function (id) {
     return jwt.sign({id}, process.env.SECRET);
 }
@@ -21,6 +21,28 @@ exports.isAuthentic = async(req,res,next)=>{
     exports.isPrimium= async(req,res,next)=>{
         if(req.user.isPrimium) return next();
         return res.status(401).json({message:"Not a primium user"});
+    }
+
+    exports.uploadToAWS = async(data,name)=>{
+       const s3Bucket = new AWS.S3({
+            accessKeyId:process.env.AWS_access,
+            secretAccessKey:process.env.AWS_secret,
+            Bucket:"expensetraker"
+        })
+        var params={
+            Bucket:"expensetraker",
+            Key:name,
+            Body:data,
+            ACL:"public-read"
+        }
+
+        return new Promise ((resolve,reject)=>{
+            s3Bucket.upload(params,(err,AWSres)=>{
+            if(err) reject( err);
+            else { console.log(AWSres);
+                resolve(AWSres.Location);
+            }
+        })})
     }
 
     // const user = await User.findOne({where:{id}});

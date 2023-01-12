@@ -1,9 +1,10 @@
 const Razorpay = require('razorpay');
 const Expense = require('../models/expense');
+const FileUrl = require('../models/fileUrl');
 const Order = require('../models/order');
 const User = require('../models/user');
 const sequelize = require('../utils/database');
-
+const {uploadToAWS } = require("../utils/utils");
 
 exports.purches = async (req,res,next)=>{
     var instance = new Razorpay({
@@ -50,14 +51,28 @@ exports.leadboard =async(req,res,next)=>{
       order:[["total","DESC"]]
     }
   );
-  // const users = await User.findAll();
-  // const data=[];
-  // for (const user of users) {
-  //   const temp= {id:user.id,name:user.name,total:0};
-  // for(let exp of expenses){
-  //     if(temp.id==exp.userId)temp.total += exp.value;  
-  //   }
-  //   data.push(temp);
-  // }
   res.json(expenses);
+}
+
+exports.downloadFile = async(req,res,next)=>{
+  const expenses = await req.user.getExpenses({
+    limit: 1,
+    order: [ [ 'updatedAt', 'DESC' ]]
+  });
+
+  if(!expenses.length) return res.status(404).json({message:"No expense present"});
+
+  const files = await req.user.getFileUrls({
+    limit: 1, 
+    order: [ [ 'createdAt', 'DESC' ]]
+  });
+  if(files.length && (new Date(expenses[expenses.length-1].updatedAt).getTime()< new Date(files[files.length-1].updatedAt).getTime()))
+      return res.send(files[files.length-1].link);
+
+const data = JSON.stringify(expenses);
+const name = `Expense${req.user.id}/${Date.now()}.txt`;
+
+const url = await uploadToAWS(data,name);
+await FileUrl.create({link:url,userId : req.user.id})
+  res.send(url);
 }

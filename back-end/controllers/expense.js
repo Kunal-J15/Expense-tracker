@@ -4,8 +4,11 @@ const Expense = require('../models/expense.js');
 
 module.exports.getAllExpenses = (async(req,res,next)=>{
     // .......FIND ALL........
-    const clients = await Expense.findAll({where:{userId : req.user.id}}); 
-    res.send(clients)
+    const exp = Expense.findAll({where:{userId : req.user.id}});
+    const files = req.user.getFileUrls()
+    res.json(await Promise.all([exp,files]))
+     
+    
   });
 
   module.exports.postExpense = catchAsync(async(req,res,next)=>{

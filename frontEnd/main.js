@@ -1,5 +1,6 @@
 var form = document.getElementById('addForm');
 var itemList = document.getElementById('items');
+const fileList = document.getElementById('files');
 const totalDis = document.getElementById('total')
 const baseUrl = "http://localhost:3000/expense/";
 const primiumUrl = "http://localhost:3000/primium/";
@@ -33,7 +34,9 @@ async function loadItems(){
   try {
     localStorage.getItem("token") && JSON.parse(localStorage.getItem("token")).isPrimium && primiumFeatures();
     let data = await axios.get(baseUrl);
-    append(data.data);
+    console.log(data.data);
+    append(data.data[0]);
+    appendFileList(data.data[1]);
   } catch (error) {
     console.log(error);
     if(error.response.status===401);
@@ -158,15 +161,15 @@ function primiumFeatures() {
   document.getElementById("primium").innerText = "You are Primium user"
   document.getElementById("rzp-button1").innerText = "Leadboard"
   document.getElementById("rzp-button1").onclick=leadBoard;
-  const btn = document.createElement("button");
-  btn.className = "btn btn-dark";
-  btn.innerText = "Report";
-  btn.onclick = ()=>{
-    let url = window.location.href.split("/");
-        url[url.length-1] = "report.html";
-        window.location = url.join("/");
-  };
-  document.querySelector("#main-header").appendChild(btn);
+  const report = document.getElementById("report");
+  report.style.display="";
+  report.onclick = async()=>{
+    const data = await axios.get(primiumUrl+"download");
+    const a = document.createElement("a");
+    a.href = data.data;
+    a.download = "myexpense.csv"
+    a.click();
+  }
 }
 
 function append(data){
@@ -195,7 +198,21 @@ function append(data){
   totalDis.innerText = "Total Expense: "+total;
 
 }
+function appendFileList(data){
+  for(let {link,id,createdAt} of data){
+    const li = document.createElement('li');
+    li.className = 'list-group-item '+ id;
 
+    const a = document.createElement("a");
+    a.href = link;
+    a.innerText = createdAt;
+    a.download = "myexpense.txt";
+    li.appendChild(a);
+   
+
+    fileList.appendChild(li);
+  }
+}
 function addListner(){
   form.addEventListener('submit', addItem);
   itemList.addEventListener('click', removeItem);
