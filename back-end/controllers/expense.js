@@ -1,10 +1,10 @@
 const catchAsync = require('../utils/catchAsync');
 // ............REQUIRED MODELS AND ROUTES...............
 const Expense = require('../models/expense.js');
-const perPage = 8;
+var perPage = 10;
 module.exports.getAllExpenses = (async(req,res,next)=>{
     // .......FIND ALL........
-    // console.log(req.query);
+    if(req.query.perPage!="null") perPage = parseInt(req.query.perPage);
     const page = req.query.page>1?parseInt(req.query.page):1;
     const exp = Expense.findAndCountAll({where:{userId : req.user.id},
       offset: perPage*(page-1),

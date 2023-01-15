@@ -3,14 +3,26 @@ var itemList = document.getElementById('items');
 const fileList = document.getElementById('files');
 const totalDis = document.getElementById('total');
 const pagi = document.querySelector("#pagi");
+const perPage = document.querySelector("#perPage");
 const baseUrl = "http://localhost:3000/expense/";
 const primiumUrl = "http://localhost:3000/primium/";
 
 window.addEventListener("DOMContentLoaded", loadItems);
 var total = 0;
+perPage.onsubmit= e=>{
+ e.preventDefault();
+
+ if(localStorage.getItem("perPage")!= e.target.per.value){
+  localStorage.setItem("perPage",e.target.per.value);
+  loadPageData()
+ } 
+}
+if(localStorage.getItem("perPage")){
+  const op = document.getElementById(localStorage.getItem("perPage"));
+  op.selected = true;
+}
 pagi.onclick = (e) => {
   if (e.target.id && e.target.className == "page-link ") {
-    itemList.innerHTML = ""
     loadPageData(e.target.id);
   }
 }
@@ -53,7 +65,9 @@ async function loadItems() {
 }
 
 async function loadPageData(num) {
-  let data = await axios.get(baseUrl + "?page=" + num);
+  itemList.innerHTML = "";
+  total=0;
+  let data = await axios.get(baseUrl + "?page=" + num+"&perPage="+localStorage.getItem("perPage"));
   pagination(parseInt((data.data[0].count) % data.data[3]) ? parseInt((data.data[0].count) / data.data[3]) + 1 : parseInt((data.data[0].count) / data.data[3]), parseInt(data.data[2]));
   append(data.data[0].rows);
   return data.data[1]; //used in loadItems to appendFileList
