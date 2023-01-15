@@ -1,14 +1,18 @@
 const catchAsync = require('../utils/catchAsync');
 // ............REQUIRED MODELS AND ROUTES...............
 const Expense = require('../models/expense.js');
-
+const perPage = 8;
 module.exports.getAllExpenses = (async(req,res,next)=>{
     // .......FIND ALL........
-    const exp = Expense.findAll({where:{userId : req.user.id}});
-    const files = req.user.getFileUrls()
-    res.json(await Promise.all([exp,files]))
-     
-    
+    // console.log(req.query);
+    const page = req.query.page>1?parseInt(req.query.page):1;
+    const exp = Expense.findAndCountAll({where:{userId : req.user.id},
+      offset: perPage*(page-1),
+      limit: perPage});
+    const files = req.user.getFileUrls();
+    return Promise.all([exp,files,page,perPage]).then(msg=>{
+      res.json(msg)
+    })
   });
 
   module.exports.postExpense = catchAsync(async(req,res,next)=>{
