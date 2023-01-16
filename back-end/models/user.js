@@ -22,6 +22,10 @@ const User = sequelize.define("user",{
         allowNull:false
     },
     isPrimium:Sequelize.BOOLEAN,
+    lastTime:{
+        type:Sequelize.DATE,
+        defaultValue:new Date()
+        }
 });
 
 module.exports = User;

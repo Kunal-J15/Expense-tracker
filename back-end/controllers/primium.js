@@ -55,19 +55,19 @@ exports.leadboard =async(req,res,next)=>{
 }
 
 exports.downloadFile = async(req,res,next)=>{
-  const expenses = await req.user.getExpenses({
-    limit: 1,
-    order: [ [ 'updatedAt', 'DESC' ]]
-  });
-
+  const expenses = await req.user.getExpenses()
   if(!expenses.length) return res.status(404).json({message:"No expense present"});
 
   const files = await req.user.getFileUrls({
     limit: 1, 
     order: [ [ 'createdAt', 'DESC' ]]
   });
-  if(files.length && (new Date(expenses[expenses.length-1].updatedAt).getTime()< new Date(files[files.length-1].updatedAt).getTime()))
-      return res.send(files[files.length-1].link);
+  if(files.length && (new Date(req.user.lastTime).getTime()< new Date(files[files.length-1].updatedAt).getTime())){
+    console.log("local link");
+    return res.send(files[files.length-1].link);
+  }
+      
+
 
 const data = JSON.stringify(expenses);
 const name = `Expense${req.user.id}/${Date.now()}.txt`;

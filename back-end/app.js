@@ -1,7 +1,13 @@
-require('dotenv').config()
+if(process.env.NODE_ENV!="production"){
+  require('dotenv').config()
+}
 
 const express = require('express')
 const methodOverride = require('method-override');
+const helmet = require("helmet");
+const morgan = require('morgan');
+const path = require("path");
+const fs  = require("fs");
 
 const app = express();
 const port = 3000;
@@ -10,6 +16,7 @@ const userRoute = require("./routes/users");
 const primiumRoute = require("./routes/primium");
 const passwordRoute = require("./routes/password");
 
+
 const sequelize = require('./utils/database.js');
 const cors = require("cors");
 const User = require('./models/user');
@@ -17,9 +24,11 @@ const Expense = require('./models/expense');
 const Order = require('./models/order');
 const PasswordLink = require('./models/forgotPassword');
 const FileUrl = require('./models/fileUrl');
+
 app.use(cors());
-
-
+app.use(helmet());
+const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'});
+app.use(morgan('combined',{stream:accessLogStream}));
 
 
 // ........................................... ULRencoder, methodOverride................
@@ -37,10 +46,8 @@ User.hasMany(PasswordLink);
 User.hasMany(FileUrl);
 FileUrl.belongsTo(User);
 
-sequelize.sync({/*force:true*/}).then(u=>{
-    app.listen(port, () => {
-        console.log(`Booking app listening on port ${port}`)
-      })
+sequelize.sync({/*force:true*/}).then(()=>{
+    app.listen(process.env.PORT)
  }).catch(e=>{
      console.log(e);
  })

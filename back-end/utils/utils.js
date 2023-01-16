@@ -18,6 +18,14 @@ exports.isAuthentic = async(req,res,next)=>{
         res.status(401).send("Login first")
     }
 }  
+
+exports.updateLastTime = async(req,res,next)=>{
+   console.log( req.user.lastTime);
+   req.user.lastTime = new Date();
+   await req.user.save();
+   console.log( req.user.lastTime);
+   next();
+}
     exports.isPrimium= async(req,res,next)=>{
         if(req.user.isPrimium) return next();
         return res.status(401).json({message:"Not a primium user"});
@@ -44,13 +52,3 @@ exports.isAuthentic = async(req,res,next)=>{
             }
         })})
     }
-
-    // const user = await User.findOne({where:{id}});
-    // if(user) {
-    //     console.log("yup");
-    //     next();
-    // }
-    // else{
-    //     console.log("no");
-    //     res.status(401).send("login first");
-    // }

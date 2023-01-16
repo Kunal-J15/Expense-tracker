@@ -11,6 +11,7 @@ module.exports.getAllExpenses = (async(req,res,next)=>{
       limit: perPage});
     const files = req.user.getFileUrls();
     return Promise.all([exp,files,page,perPage]).then(msg=>{
+      if(!msg[0].count)msg[0].count = 1; // to avoid unexpected behav at front end at pagination
       res.json(msg)
     })
   });
