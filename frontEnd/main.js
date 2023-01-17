@@ -54,6 +54,7 @@ async function loadItems() {
     localStorage.getItem("token") && JSON.parse(localStorage.getItem("token")).isPrimium && primiumFeatures();
     const val = await loadPageData(1);
     appendFileList(val);
+    addlogout();
   } catch (error) {
     console.log(error);
     if (error.response.status === 401);
@@ -183,6 +184,8 @@ async function leadBoard(e) {
 }
 document.getElementById("rzp-button1").onclick = paymentHandler;
 
+
+
 function primiumFeatures() {
   document.getElementById("primium").innerText = "You are Primium user"
   document.getElementById("rzp-button1").innerText = "Leadboard"
@@ -258,6 +261,17 @@ function appendFileList(data) {
 
 
     fileList.appendChild(li);
+  }
+}
+
+function addlogout() {
+  const logout = document.querySelector("#logout");
+  logout.style.display = "";
+  logout.onclick=()=>{
+    localStorage.clear();
+    let url = window.location.href.split("/");
+    url[url.length - 1] = "login.html";
+    window.location = url.join("/");
   }
 }
 function addListner() {
