@@ -3,7 +3,7 @@ var router = express.Router({mergeParams:true});
 const primiumController = require("../controllers/primium");
 const {isAuthentic, isPrimium } = require("../utils/utils");
 // const { route } = require('./expense');
-router.get(isAuthentic,primiumController.purches);
+router.get("/",isAuthentic,primiumController.purches);
 
 router.get("/leadboard",isAuthentic,isPrimium,primiumController.leadboard)
 router.get("/download/",isAuthentic,isPrimium,primiumController.downloadFile)

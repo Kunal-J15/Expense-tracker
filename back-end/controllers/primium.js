@@ -70,7 +70,7 @@ exports.downloadFile = async(req,res,next)=>{
 
 
 const data = JSON.stringify(expenses);
-const name = `Expense${req.user.id}/${Date.now()}.txt`;
+const name = `Expense${req.user.id + process.env.DB_HOST}/${Date.now()}.txt`;
 
 const url = await uploadToAWS(data,name);
 await FileUrl.create({link:url,userId : req.user.id})

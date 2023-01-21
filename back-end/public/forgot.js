@@ -1,7 +1,6 @@
 const forgot = document.querySelector("#forgot");
-var passUrl = core + "password/" ;
-console.log(passUrl);
-//passUrl="http://localhost:3000/password/";
+var passUrl = "http://ec2-44-203-193-188.compute-1.amazonaws.com:3000/password/" ;
+// passUrl="http://localhost:3000/password/";
 if(forgot){
     forgot.addEventListener("submit",async(e)=>{
         e.preventDefault();

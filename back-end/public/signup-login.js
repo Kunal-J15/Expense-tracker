@@ -1,11 +1,5 @@
-var core = "http://ec2-44-203-193-188.compute-1.amazonaws.com/";
-if(localStorage.getItem("core") == 'local' || confirm("running on localhost ?")){
-    core =  "http://localhost:3000/";
-    localStorage.setItem("core","local");
-} 
-var base = core + "user/";
-
-// 
+var base = "http://ec2-44-203-193-188.compute-1.amazonaws.com/user/";
+// base =  "http://localhost:3000/user/";
 const signIn = document.querySelector("#signIn");
 const logIn = document.querySelector("#logIn");
 const resDiv = document.querySelector("#res");

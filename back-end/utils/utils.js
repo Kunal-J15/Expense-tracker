@@ -20,10 +20,10 @@ exports.isAuthentic = async(req,res,next)=>{
 }  
 
 exports.updateLastTime = async(req,res,next)=>{
-   console.log( req.user.lastTime);
+//    console.log( req.user.lastTime);
    req.user.lastTime = new Date();
    await req.user.save();
-   console.log( req.user.lastTime);
+//    console.log( req.user.lastTime);
    next();
 }
     exports.isPrimium= async(req,res,next)=>{
@@ -47,7 +47,7 @@ exports.updateLastTime = async(req,res,next)=>{
         return new Promise ((resolve,reject)=>{
             s3Bucket.upload(params,(err,AWSres)=>{
             if(err) reject( err);
-            else { console.log(AWSres);
+            else { //console.log(AWSres);
                 resolve(AWSres.Location);
             }
         })})

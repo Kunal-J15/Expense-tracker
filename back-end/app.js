@@ -34,6 +34,7 @@ app.use(morgan('combined',{stream:accessLogStream}));
 
 
 // ........................................... ULRencoder, methodOverride................
+// app.use(express.static("public"));
 app.use(express.json({extended:true}))
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
@@ -59,8 +60,9 @@ app.use("/expense/",expenseRoute);
 app.use("/user/",userRoute);
 app.use("/primium/",primiumRoute);
 app.use("/password/",passwordRoute);
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.use((req, res) => {
+  console.log(req.url);
+  res.sendFile(path.join(__dirname,"public",req.url))
 })
 
 

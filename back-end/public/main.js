@@ -4,9 +4,10 @@ const fileList = document.getElementById('files');
 const totalDis = document.getElementById('total');
 const pagi = document.querySelector("#pagi");
 const perPage = document.querySelector("#perPage");
-var baseUrl = core + "expense/";
-var primiumUrl = core + "primium/"; 
-
+var baseUrl = "http://ec2-44-203-193-188.compute-1.amazonaws.com/expense/";
+var primiumUrl = "http://ec2-44-203-193-188.compute-1.amazonaws.com/primium/"; 
+// baseUrl =  "http://localhost:3000/expense/";
+// primiumUrl = "http://localhost:3000/primium/";
 
 
 window.addEventListener("DOMContentLoaded", loadItems);
@@ -23,11 +24,12 @@ if(localStorage.getItem("perPage")){
   const op = document.getElementById(localStorage.getItem("perPage"));
   op.selected = true;
 }
-pagi.onclick = (e) => {
+pagi.addEventListener('click',(e) => {
   if (e.target.id && e.target.className == "page-link ") {
     loadPageData(e.target.id);
   }
-}
+})
+// pagi.onclick = 
 
 form.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
@@ -184,23 +186,23 @@ async function leadBoard(e) {
 
 
 }
-document.getElementById("rzp-button1").onclick = paymentHandler;
+document.getElementById("rzp-button1").addEventListener('click',paymentHandler);
 
 
 
 function primiumFeatures() {
   document.getElementById("primium").innerText = "You are Primium user"
   document.getElementById("rzp-button1").innerText = "Leadboard"
-  document.getElementById("rzp-button1").onclick = leadBoard;
+  document.getElementById("rzp-button1").addEventListener('click',leadBoard);
   const report = document.getElementById("report");
   report.style.display = "";
-  report.onclick = async () => {
+  report.addEventListener('click',async () => {
     const data = await axios.get(primiumUrl + "download");
     const a = document.createElement("a");
     a.href = data.data;
     a.download = "myexpense.csv"
     a.click();
-  }
+  })
 }
 function pagination(count, page) {
   let LIs = ""
@@ -269,12 +271,13 @@ function appendFileList(data) {
 function addlogout() {
   const logout = document.querySelector("#logout");
   logout.style.display = "";
-  logout.onclick=()=>{
+  logout.addEventListener('click',()=>{
     localStorage.clear();
     let url = window.location.href.split("/");
     url[url.length - 1] = "login.html";
     window.location = url.join("/");
-  }
+  })
+  // logout.onclick=
 }
 function addListner() {
   form.addEventListener('submit', addItem);
