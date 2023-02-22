@@ -7,7 +7,7 @@ exports.addUser = async(req,res,next)=>{
     try {
     const {name,email,password} = req.body;
     const hash = bcrypt.hashSync(password, saltRounds);
-    const user = User.build({name,email,password:hash});
+    const user = new User({name,email,password:hash});
     await user.save();
     res.send("succefuly saved")
    
@@ -21,7 +21,7 @@ exports.addUser = async(req,res,next)=>{
 exports.login = async(req,res,next)=>{
     try {
     const {email,password} = req.body;
-    const user = await User.findOne({where:{email}});
+    const user = await User.findOne({email});
     if(user){
         bcrypt.compare(password, user.password, function(err, result) {
             if(err) return res.sendStatus(300).send("something went wrong")

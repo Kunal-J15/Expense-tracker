@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 // import { v4 as uuidv4 } from 'uuid'; 
 const { v4: uuidv4 } = require('uuid');
-const PasswordLink = require('../models/forgotPassword');
+// const PasswordLink = require('../models/forgotPassword');
 
 
 const transporter = nodemailer.createTransport({
@@ -32,22 +32,20 @@ module.exports.forgot = (req, res, next) => {
         text: `http://localhost:3000/password/reset/${link}`,
     };
 
-    User.findOne({ where: { email } }).then(user => {
+    User.findOne({ email }).then(async(user) => {
         if (user) { 
-            user.createPasswordLink({id:link,isActive:true});
+          console.log(user.name);
+            user.passwordLink.push({link:link,isActive:true});
+            await user.save();
             res.json({message:"e-mail send to your mail id to reset password and will expire in 10 minutes"});
             return   transporter.sendMail(mailOptions, async function (error, info) {
                 if (error) console.log(error); 
                 else {
-                  const linkUp = await PasswordLink.findOne({
-                    where:{
-                      id:link,
-                      isActive:true
-                    }
-                  });
+                  const linkUp = user.passwordLink.find(e=> e.link.toString() == req.params.id.toString() && isActive==true);
                   if(linkUp){
                     setTimeout(() => {
-                      linkUp.update({isActive:false});
+                      linkUp.isActive = false;
+                      linkUp.save();
                     }, 10*60*1000);
                   }
                 }
@@ -59,15 +57,10 @@ module.exports.forgot = (req, res, next) => {
 }
 
 module.exports.resetForm = async (req, res, next) => {
-  const link = await PasswordLink.findOne({
-    where:{
-      id:req.params.id,
-      isActive:true
-    },
-    include:{
-      model:User,
-    }
-  });
+  console.log(req.params.id);
+  const link = await User.findOne({$and:[{'passwordLink.link':req.params.id,},{
+    'passwordLink.isActive': true }]});
+  console.log(link);
   if(link){
    
     return res.send(`<!DOCTYPE html>
@@ -93,21 +86,16 @@ module.exports.resetForm = async (req, res, next) => {
 
 module.exports.reset = async (req, res, next) => {
   const {password} = req.body
-  const user = await  User.findOne({
-    include:{
-      model:PasswordLink,
-      where:{
-        id:req.params.id,
-        isActive:true
-      }
-    }
-  });
+  const user = await  User.findOne({$and:[
+    {'passwordLink.link': req.params.id},
+    {'passwordLink.isActive':true }
+  ]});
   if(user){
     const hash = bcrypt.hashSync(password, saltRounds);
-   await user.update({password:hash});
-   const link = await PasswordLink.findOne({where:{ id:req.params.id }})
+    user.password = hash;
+   const link = user.passwordLink.find(e=> e.link.toString() == req.params.id.toString() && e.isActive==true);
    link.isActive = false;
-   await link.save();
+   await user.save();
     return res.send(`Password is reset`)
   }
   return res.send("Link is invalid or expired");

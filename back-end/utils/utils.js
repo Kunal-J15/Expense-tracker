@@ -10,7 +10,7 @@ exports.isAuthentic = async(req,res,next)=>{
         const hash = req.headers.athentication;
         var decoded = jwt.verify(hash, process.env.SECRET);
         // console.log(decoded.id.id);
-        req.user =  await User.findOne({where:{id:decoded.id}});
+        req.user =  await User.findOne({_id:decoded.id});
         if(req.user) return next();
         // console.log("incomming");
         res.status(401).send("Login first")
@@ -21,9 +21,8 @@ exports.isAuthentic = async(req,res,next)=>{
 
 exports.updateLastTime = async(req,res,next)=>{
 //    console.log( req.user.lastTime);
-   req.user.lastTime = new Date();
+   req.user.lastTime = Date.now();
    await req.user.save();
-//    console.log( req.user.lastTime);
    next();
 }
     exports.isPrimium= async(req,res,next)=>{
